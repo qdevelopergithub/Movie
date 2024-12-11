@@ -5,36 +5,67 @@ import MovieList from "../components/homeSectin/MovieList";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [totalPages, setTotalPages] = useState(1); // Track total pages
+
   const token = localStorage.getItem("loginToken");
 
+  const fetchMovies = async (page: number) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://moviesbackend-3rb8.onrender.com/movies?page=${page}`,
+        {
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setLoading(false);
+
+      // Assuming the response contains 'movies' and 'totalPages' properties
+      setMovies(response.data.movies);
+      setTotalPages(Math.ceil(response.data.count / 10));
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        // Make GET request using axios
-        const response = await axios.get(
-          "http://localhost:3000/movies?page=1",
-          {
-            headers: {
-              accept: "*/*",
-              Authorization: `Bearer ${token}`, // Replace with your access token
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    fetchMovies(currentPage);
+  }, [currentPage]);
 
-        // Assuming the response contains a 'data' property with the movies list
-        setMovies(response.data);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-        // Handle error state if needed
-      }
-    };
-
-    fetchMovies();
-  }, []);
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
-    <>{movies.length === 0 ? <EmptyState /> : <MovieList movie={movies} />}</>
+    <>
+      {loading ? (
+        <>Loading.....</>
+      ) : (
+        <>
+          {movies.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <MovieList
+              movies={movies}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
+      )}
+    </>
   );
 };
 

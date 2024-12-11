@@ -76,14 +76,17 @@ const AddNewMovie = () => {
         poster: icon,
       };
       try {
-        const response = await fetch("http://localhost:3000/movie", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        });
+        const response = await fetch(
+          "https://moviesbackend-3rb8.onrender.com/movie",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          }
+        );
         if (response.ok) {
           Navigate("/home");
         } else {

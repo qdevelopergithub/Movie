@@ -84,7 +84,7 @@ const EditfFrom = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/movie/${item.id}`,
+        `https://moviesbackend-3rb8.onrender.com/movie/${item.id}`,
         updatedMovie,
         {
           headers: {

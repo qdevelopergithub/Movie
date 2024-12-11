@@ -32,10 +32,13 @@ const Login = () => {
     if (!emailError && !passwordError) {
       try {
         // Make POST request using axios
-        const response = await axios.post("http://localhost:3000/login", {
-          email,
-          password,
-        });
+        const response = await axios.post(
+          "https://moviesbackend-3rb8.onrender.com/login",
+          {
+            email,
+            password,
+          }
+        );
 
         if (response.status === 200) {
           // Assuming the API responds with a token
